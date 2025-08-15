@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+    db:
+        image: postgres:14-alpine
+        environment:
+            POSTGRES_DB: people
+            POSTGRES_USER: people
+            POSTGRES_PASSWORD: people
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+    app:
+        image: fabiocberg/people-api:1.0.0
+        environment:
+            SPRING_PROFILES_ACTIVE: docker
+            DB_HOST: db
+            DB_PORT: 5432
+            DB_NAME: people
+            DB_USER: people
+            DB_PASSWORD: people
+        depends_on:
+            db:
+                condition: service_healthy
+        ports:
+            - "8080:8080"
+
+    web:
+        image: fabiocberg/people-web:1.0.0
+        depends_on:
+            - app
+        ports:
+            - "5173:80"
+
+volumes:
+    pgdata:
