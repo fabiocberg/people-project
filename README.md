@@ -1,4 +1,4 @@
-# People Monorepo (Backend + Frontend)
+# People Project (Backend + Frontend)
 
 ## Rodar a partir do código fonte local
 
